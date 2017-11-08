@@ -1,0 +1,157 @@
+﻿
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<List<WebSinglePageApp.Models.Title>>
+
+@{
+    
+
+    foreach (var names in Model)
+    {
+        string title_view = names.Name;
+
+        ViewBag.Title = title_view ;
+
+        if (names.Id == 1)
+        {
+            <div style="text-align:center">
+                <h1>  <span id="newtitle"></span> </h1> 
+            </div>
+        }
+        
+
+    }
+
+}
+
+       
+<!--- spacer -->
+<div class="spacer"></div>
+
+    <div class="formHolder" >
+   
+      
+
+        <div class="mui-form" style="background:inherit">
+
+            <form id="titleForm">
+
+                <div class="mui-textfield">
+                    <input type="text" id="textName" name="Name" placeholder="Enter Page Title Here ">
+                </div>
+
+                <input type="submit" id="submit" class="mui-btn mui-btn--raised" value="Submit">
+
+            </form>
+            
+        </div>
+        
+    </div>
+
+
+
+
+
+<!--- spacer -->
+<div class="spacer"></div>
+
+<div class="quineFormHolder">
+    <div id="form" class="mui-form" style="background:inherit"> </div>
+    </div>
+
+
+
+
+
+@section scriptsHead{
+
+        <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+
+        <script src="~/Scripts/jquery.validate.min.js"></script>
+
+
+    }
+
+
+
+
+
+@section scriptPageContent{
+
+
+
+    <script>
+        $(document).ready(function () {
+
+            // process the form
+            $('#titleForm').submit(function (event) {
+
+                // getting the name from the imput
+                var name = $("#textName").val();
+
+                // datat being posted
+                var dataString = 'Name=' + name;
+
+                // if name is empty alert me...
+                if (name == '') {
+                    alert("Please Fill All Fields");
+                } else {
+                    // process the form and post it with ajaz
+                    $.ajax({
+                        type: 'POST',
+                        url: '/submit/edit',
+                        data: dataString,
+                        dataType: 'json',
+                        success: function (data) {
+
+                            if (data == "completed") {
+                                console.log(data);
+
+                                document.title = name;
+                                // update header title...
+                                $("span#newtitle").append(" : " + name);
+
+                                // now i will simulate the quine program by regenating the form
+
+                                $("div#form").append(
+
+                                    $("<form/>", {
+                                        id: 'titleForm'
+                                        
+                                    }).append(
+                                        // Create <form> Tag and Appending to an HTML Div.
+                                        $("<div/>", {
+                                            class: 'mui-textfield'
+                                        }).append($("<input/>", {
+                                            type: 'text',
+                                            id: 'textName',
+                                            name: 'Name',
+                                            placeholder: 'Enter Page Title Here'
+                                        }))
+                                        , // Creating Input Element With Attribute.
+                                        $("<br/>"), $("<input/>", {
+                                            type: 'submit',
+                                            id: 'submit',
+                                            class: 'mui-btn mui-btn--raised',
+                                            value: 'Submit'
+
+                                        })));
+                                
+                            }
+                            
+                        }
+                    });
+
+
+                }
+
+                // stop the form from submitting and refreshing
+                event.preventDefault();
+            });
+
+        });
+    </script>
+
+    }
+
+
+
